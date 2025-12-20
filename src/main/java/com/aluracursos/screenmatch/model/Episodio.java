@@ -20,6 +20,8 @@ public class Episodio {
     private Serie serie;
     public Episodio(){}
 
+    // Constructor que transforma el DTO DatosEpisodio en la entidad Episodio.
+    // Realiza parsing defensivo para evaluación y fecha (N/A o formatos inesperados).
     public Episodio(Integer numero, DatosEpisodio d) {
         this.temporada = numero;
         this.titulo = d.titulo();

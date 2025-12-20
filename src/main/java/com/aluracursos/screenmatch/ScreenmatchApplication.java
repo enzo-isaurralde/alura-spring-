@@ -18,6 +18,9 @@ public class ScreenmatchApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		// Se crea la clase "Principal" que contiene la lógica del menú CLI.
+		// Usamos el repositorio inyectado para que la capa de presentación
+		// pueda persistir las entidades consultadas.
 		Principal principal = new Principal(repository);
 		principal.muestraElMenu();
 

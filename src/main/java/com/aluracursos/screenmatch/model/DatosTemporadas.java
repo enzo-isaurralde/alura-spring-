@@ -10,4 +10,5 @@ public record DatosTemporadas(
         @JsonAlias("Season") Integer numero,
         @JsonAlias("Episodes") List<DatosEpisodio> episodios
 ) {
+    // Representa la respuesta JSON de OMDB para una temporada: número y lista de episodios.
 }

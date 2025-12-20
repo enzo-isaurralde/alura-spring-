@@ -10,4 +10,5 @@ public record DatosEpisodio(
         @JsonAlias("imdbRating")String evaluacion,
         @JsonAlias("Released")String fechaDeLanzamiento
 ) {
+    // DTO para un episodio dentro de la respuesta de una temporada de OMDB.
 }
