@@ -13,4 +13,5 @@ public record DatosSerie(
         @JsonAlias("Actors")String actores,
         @JsonAlias("Plot")String sinopsis) {
         // DTO inmutable que representa la respuesta parcial de la API OMDB.
+        // Jackson mapeará los campos por las alias indicadas; campos desconocidos se ignoran.
 }

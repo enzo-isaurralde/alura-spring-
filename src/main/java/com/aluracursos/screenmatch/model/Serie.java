@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.OptionalDouble;
+/**
+ * Entidad JPA que representa una serie. Contiene mapeo a la tabla 'series'
+ * y una relación OneToMany con episodios. Los constructores permiten crear
+ * la entidad a partir del DTO DatosSerie.
+ */
 @Entity
 @Table(name = "series")
 public class Serie{
@@ -38,6 +43,8 @@ public class Serie{
         this.sinopsis = datosSerie.sinopsis();
     }
     private double parseEvaluacion(String value){
+        // Convierte la cadena de evaluación (puede ser "N/A") a double. Si no
+        // es parseable devolvemos 0.0 para evitar NPE/NumberFormatException.
         if (value == null || value.equalsIgnoreCase("N/A")){
             return 0.0;
         }try {
@@ -131,6 +138,7 @@ public class Serie{
     }
 
     // Setter para episodios: asigna la referencia de la serie en cada episodio
+    // para mantener la consistencia del lado propietario de la relación.
     public void setEpisodios(List<Episodio> episodios) {
         episodios.forEach(e -> e.setSerie(this));
         this.episodios = episodios;

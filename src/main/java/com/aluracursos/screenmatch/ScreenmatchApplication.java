@@ -7,6 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Clase principal de Spring Boot que inicia la aplicación y ejecuta
+ * el menú CLI (clase Principal) usando el repositorio inyectado.
+ *
+ * Nota: la ejecución del menú se realiza en el hilo principal y espera
+ * entradas por consola; esto es adecuado para aplicaciones de ejemplo/CLI.
+ */
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
     @Autowired

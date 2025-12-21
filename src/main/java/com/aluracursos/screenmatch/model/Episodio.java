@@ -6,6 +6,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 @Entity
 @Table(name = "episodios")
+/**
+ * Entidad JPA que representa un episodio de una serie.
+ * Contiene utilidades para crear la entidad a partir del DTO DatosEpisodio
+ * y hace parsing defensivo de los campos que pueden venir como "N/A" o en formatos distintos.
+ */
 public class Episodio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
