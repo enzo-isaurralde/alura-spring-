@@ -1,8 +1,10 @@
 package com.aluracursos.screenmatch.repositorio;
 
+import com.aluracursos.screenmatch.dto.EpisodioDTO;
 import com.aluracursos.screenmatch.model.Categoria;
 import com.aluracursos.screenmatch.model.Episodio;
 import com.aluracursos.screenmatch.model.Serie;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,15 +28,26 @@ public interface SerieRepository extends JpaRepository <Serie, Long>{
     @Query("SELECT s FROM Serie s WHERE s.totalTemporadas <= :totalTemporadas AND s.evaluacion >= :evaluacion")
     List<Serie> seriesPorTemparadaYEvaluacion(int totalTemporadas, Double evaluacion);
 
-    // Atención: JPQL no soporta la palabra reservada ILIKE ni la sintaxis LIMIT de SQL.
-    // Si se desea hacer case-insensitive con patrones en JPQL, usar LOWER(e.titulo) LIKE LOWER(CONCAT('%', :nombreEpisodio, '%'))
-    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE e.titulo ILIKE %:nombreEpisodio%")
-    List<Episodio> episodiosPorNombre(String nombreEpisodio);
+    // NOTA: en JPQL no existe 'ILIKE'. Para búsquedas case-insensitive con patrón
+    // usamos LOWER(...) y LIKE con CONCAT.
+    // Esta consulta busca episodios cuyo título contiene el texto dado (insensible a mayúsculas).
+    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE LOWER(e.titulo) LIKE LOWER(CONCAT('%', :nombreEpisodio, '%'))")
+    List<Episodio> episodiosPorNombre(@Param("nombreEpisodio") String nombreEpisodio);
 
-    // Atención: 'LIMIT' y 'ORDER BY' con límite no forman parte de JPQL estándar.
-    // Para obtener los top 5 episodios sería preferible usar:
-    // @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie ORDER BY e.evaluacion DESC")
-    // y luego limitar en la invocación (p. ej. Pageable) o usar nativeQuery=true con SQL propio.
-    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie ORDER BY e.evaluacion DESC LIMIT 5 ")
-    List<Episodio> top5Episodios(Serie serie);
+    // JPQL no soporta 'LIMIT'. Si queremos limitar resultados debemos usar Pageable
+    // o usar nativeQuery=true con SQL propio. Aquí dejamos la consulta ordenada
+    // por evaluación, y si se desea limitar se puede añadir Pageable en la firma
+    // o limitar en la llamada desde el servicio.
+    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie ORDER BY e.evaluacion DESC")
+    List<Episodio> top5Episodios(@Param("serie") Serie serie);
+
+
+    // Para obtener lanzamientos más recientes ordenamos las series por la fecha máxima
+    // de sus episodios. Nuevamente: no usamos LIMIT aquí, devolvemos la lista ordenada;
+    // si se desea sólo un top N, se debe usar Pageable en la firma o recortar en el servicio.
+    @Query("SELECT s FROM Serie s JOIN s.episodios e GROUP BY s ORDER BY MAX(e.fechaDeLanzamiento) DESC")
+    List<Serie> lanzamientosMasRecientes();
+
+    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s.id = :id AND e.temporada = :numeroTemporada")
+    List<Episodio> obtenerTemporadasPorNumero(Long id, Long numeroTemporada);
 }
